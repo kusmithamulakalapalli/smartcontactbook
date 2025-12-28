@@ -118,7 +118,37 @@
 
     <script>
         // Initialize app
-        let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+        
+        // Enhanced Contacts Database - 23 sample contacts for full demo
+let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+
+// Pre-load sample contacts if empty (runs only ONCE)
+if (contacts.length === 0) {
+    contacts = [
+        // Family (3 contacts)
+        { id: 1, name: "Mom", phone: "+91-9876543210", email: "mom@example.com", birthday: "1970-05-15", group: "Family", notes: "Call every weekend", favorite: true, avatar: null, location: null },
+        { id: 2, name: "Dad", phone: "+91-9876543211", email: "dad@example.com", birthday: "1968-08-22", group: "Family", notes: "Home address: Narnaund", favorite: true, avatar: null, location: null },
+        { id: 3, name: "Sister Priya", phone: "+91-9876543212", email: "priya@example.com", birthday: "1998-03-10", group: "Family", notes: "Birthday next week!", favorite: true, avatar: null, location: null },
+        
+        // College Friends (6 contacts)
+        { id: 4, name: "Rahul Sharma", phone: "+91-9876543213", email: "rahul@vignan.ac.in", birthday: "2004-07-18", group: "College", notes: "CSE batchmate", favorite: true, avatar: null, location: null },
+        { id: 5, name: "Anita Verma", phone: "+91-9876543214", email: "anita@vignan.ac.in", birthday: "2005-01-25", group: "College", notes: "Class rep", favorite: false, avatar: null, location: null },
+        { id: 6, name: "Vikram Singh", phone: "+91-9876543215", email: "vikram@gmail.com", birthday: "2004-11-12", group: "College", notes: "Cricket captain", favorite: false, avatar: null, location: null },
+        { id: 16, name: "Neha Gupta", phone: "+91-9876543225", email: "neha@gmail.com", birthday: "2004-09-05", group: "College", notes: "Data Science group", favorite: false, avatar: null, location: null },
+        { id: 20, name: "Divya Singh", phone: "+91-9876543229", email: "divya@vignan.ac.in", birthday: "2005-05-22", group: "College", notes: "Project lead", favorite: true, avatar: null, location: null },
+        
+        // Faculty & Professional (4 contacts)
+        { id: 7, name: "Dr. Rajesh Kumar", phone: "+91-9876543216", email: "rajesh@vignan.ac.in", birthday: "1975-09-30", group: "Faculty", notes: "CSE HOD", favorite: true, avatar: null, location: null },
+        { id: 8, name: "LinkedIn Recruiter", phone: "+91-9876543217", email: "recruiter@company.com", birthday: "", group: "Career", notes: "Internships", favorite: true, avatar: null, location: null },
+        { id: 17, name: "Rohit Bansal", phone: "+91-9876543226", email: "rohit@oracle.com", birthday: "2002-11-20", group: "Professional", notes: "Oracle cert", favorite: true, avatar: null, location: null },
+        
+        // Local Narnaund (2 contacts)
+        { id: 9, name: "Shopkeeper uncle", phone: "+91-9876543218", email: "", birthday: "", group: "Local", notes: "Narnaund stationery", favorite: false, avatar: null, location: null },
+        { id: 10, name: "Auto driver Raju", phone: "+91-9876543219", email: "", birthday: "", group: "Local", notes: "College trips", favorite: false, avatar: null, location: null }
+    ];
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+    console.log('✅ Loaded 15 sample contacts for Contact Hub');
+}
         let editingId = null;
         let recognition = null;
         let watchId = null;
