@@ -4,388 +4,348 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Hub - Smart Contact Manager</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; overflow-x: hidden; }
         
-        /* PPT-Style Animated Popup */
-        #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .popup-content { text-align: center; animation: slideInFromBottom 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .title-glow { font-size: clamp(3rem, 10vw, 8rem); font-weight: 900; background: linear-gradient(45deg, #00f5ff, #ff00ff, #fff700, #00ff88); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShift 3s ease infinite, glowPulse 2s ease-in-out infinite alternate, shatterEffect 4s ease-in-out infinite; text-shadow: 0 0 20px rgba(0,255,255,0.8); filter: drop-shadow(0 0 30px rgba(0,255,255,0.5)); position: relative; }
-        .title-glow::before { content: 'CONTACT HUB'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #ff00ff, #00f5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glitch 2s infinite; opacity: 0.8; }
+        /* PPT-Style Splash Popup */
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #0f0f23 0%, #000 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; transition: opacity 1s ease-out; }
+        #splash.hidden { opacity: 0; pointer-events: none; }
         .particles { position: absolute; width: 100%; height: 100%; overflow: hidden; }
-        .particle { position: absolute; width: 4px; height: 4px; background: #00f5ff; border-radius: 50%; animation: float 6s infinite linear; box-shadow: 0 0 10px #00f5ff; }
-        @keyframes slideInFromBottom { 0% { transform: translateY(100vh); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-        @keyframes gradientShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        @keyframes glowPulse { 0% { text-shadow: 0 0 20px rgba(0,255,255,0.8), 0 0 40px rgba(0,255,255,0.6); } 100% { text-shadow: 0 0 30px rgba(0,255,255,1), 0 0 60px rgba(0,255,255,0.8), 0 0 100px rgba(0,255,255,0.5); } }
-        @keyframes shatterEffect { 0%, 100% { transform: scale(1) rotate(0deg); } 10% { transform: scale(1.05) rotate(2deg); } 20% { transform: scale(0.95) rotate(-1deg); } }
-        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
-        @keyframes float { 0% { transform: translateY(100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(-100px) rotate(360deg); opacity: 0; } }
-        .enter-btn { margin-top: 2rem; padding: 1rem 2rem; font-size: 1.2rem; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border: none; border-radius: 50px; color: white; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .enter-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
+        .particle { position: absolute; background: #fff; border-radius: 50%; animation: float 6s ease-in-out infinite; opacity: 0.6; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+        .title { font-size: clamp(4rem, 15vw, 10rem); background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glow 2s ease-in-out infinite alternate, gradient 3s ease infinite; text-shadow: 0 0 20px rgba(255,255,255,0.5); position: relative; }
+        @keyframes glow { from { filter: drop-shadow(0 0 20px #ff6b6b); } to { filter: drop-shadow(0 0 40px #4ecdc4); } }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .subtitle { color: #fff; font-size: 1.5rem; margin-top: 1rem; animation: slideIn 1s ease-out 1s both; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .enter-btn { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; margin-top: 2rem; box-shadow: 0 10px 30px rgba(255,107,107,0.4); transition: all 0.3s ease; animation: bounce 2s infinite; }
+        .enter-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(255,107,107,0.6); }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
 
-        /* Main App Styles */
-        #app { display: none; min-height: 100vh; padding: 1rem; }
-        .header { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); padding: 1rem; border-radius: 20px; margin-bottom: 1rem; text-align: center; color: white; }
-        .controls { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
-        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s; font-weight: bold; }
-        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
-        .btn-success { background: linear-gradient(45deg, #11998e, #38ef7d); color: white; }
-        .btn-danger { background: linear-gradient(45deg, #ff6b6b, #ee5a52); color: white; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        #search { flex: 1; padding: 0.8rem; border-radius: 15px; border: none; font-size: 1rem; }
-        #voice-btn { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; border-radius: 50%; width: 50px; height: 50px; }
-        .contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-        .contact-card { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; position: relative; backdrop-filter: blur(10px); }
-        .contact-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .contact-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; }
-        .contact-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .contact-details { color: #666; margin-bottom: 1rem; }
-        .contact-actions { display: flex; gap: 0.5rem; }
-        .action-btn { padding: 0.5rem; border-radius: 10px; border: none; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
-        .call-btn { background: #4CAF50; color: white; }
-        .sms-btn { background: #2196F3; color: white; }
-        .fav-btn { position: absolute; top: 1rem; right: 1rem; background: gold; color: #333; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
-        .group-tag { background: #667eea; color: white; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 2rem; border-radius: 20px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 10px; font-size: 1rem; }
-        .location { font-size: 0.9rem; color: #2196F3; cursor: pointer; }
-        .sorted-indicator { position: fixed; top: 1rem; right: 1rem; background: rgba(0,0,0,0.7); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
-        @media (max-width: 768px) { .controls { flex-direction: column; } }
+        /* Login Page */
+        #login-page { display: none; min-height: 100vh; justify-content: center; align-items: center; padding: 2rem; }
+        .login-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); padding: 3rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
+        .login-card h2 { color: #333; margin-bottom: 2rem; font-size: 2rem; }
+        input { width: 100%; padding: 15px; margin: 1rem 0; border: 2px solid #eee; border-radius: 10px; font-size: 1rem; transition: border 0.3s; }
+        input:focus { outline: none; border-color: #667eea; }
+        .login-btn { background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1rem; cursor: pointer; transition: transform 0.3s; }
+        .login-btn:hover { transform: translateY(-2px); }
+
+        /* Main App */
+        #app { display: none; min-height: 100vh; }
+        .header { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .header h1 { color: #333; font-size: 1.8rem; }
+        .controls { display: flex; gap: 1rem; align-items: center; }
+        #search, #voice-btn { padding: 10px 20px; border: 2px solid #667eea; border-radius: 25px; background: white; cursor: pointer; transition: all 0.3s; }
+        #voice-btn.active { background: #ff6b6b; color: white; }
+        #add-contact { background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 1rem; }
+        .contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        .contact-card { background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
+        .contact-card:hover { transform: translateY(-10px); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .contact-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(45deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem; }
+        .contact-name { font-size: 1.4rem; font-weight: bold; color: #333; margin-bottom: 0.5rem; }
+        .contact-phone { color: #666; margin-bottom: 1rem; }
+        .contact-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .action-btn { padding: 8px 12px; border: none; border-radius: 50%; cursor: pointer; font-size: 1rem; transition: transform 0.2s; }
+        .call-btn { background: #4ecdc4; color: white; }
+        .msg-btn { background: #f9ca24; color: white; }
+        .edit-btn { background: #667eea; color: white; }
+        .delete-btn { background: #ff6b6b; color: white; }
+        .fav-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #ffd700; }
+        .fav-btn.active { color: #ff6b6b; }
+        .group-tag { background: #e0e0e0; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem; display: inline-block; }
+        .location-btn { background: #45b7d1; color: white; margin-top: 0.5rem; width: 100%; border-radius: 10px; padding: 8px; border: none; cursor: pointer; }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 2rem; border-radius: 20px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        .close { position: absolute; top: 20px; right: 30px; font-size: 2rem; cursor: pointer; color: #999; }
+        select, textarea { width: 100%; padding: 12px; margin: 0.5rem 0; border: 2px solid #eee; border-radius: 10px; }
+        .reminder { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 0.5rem; border-radius: 5px; font-size: 0.9rem; }
+        @media (max-width: 768px) { .contacts-grid { grid-template-columns: 1fr; padding: 1rem; } .header { flex-direction: column; gap: 1rem; } }
     </style>
 </head>
 <body>
-    <!-- PPT-Style Popup -->
-    <div id="popup">
+    <!-- PPT-Style Splash Popup -->
+    <div id="splash">
         <div class="particles" id="particles"></div>
-        <div class="popup-content">
-            <div class="title-glow">CONTACT HUB</div>
-            <button class="enter-btn" onclick="enterApp()">
-                <i class="fas fa-arrow-right"></i> Enter Contact Hub
-            </button>
+        <div class="title" id="title">Contact Hub</div>
+        <div class="subtitle">Your Smart Contact Manager</div>
+        <button class="enter-btn" onclick="enterApp()"><i class="fas fa-arrow-right"></i> Enter</button>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="login-card">
+            <h2><i class="fas fa-lock"></i> Welcome Back</h2>
+            <input type="text" id="username" placeholder="Username" value="admin">
+            <input type="password" id="password" placeholder="Password" value="123">
+            <button class="login-btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> Login to Contact Hub</button>
         </div>
     </div>
 
     <!-- Main App -->
     <div id="app">
         <div class="header">
-            <h1><i class="fas fa-address-book"></i> Contact Hub 2.0</h1>
-            <p>Smart AI Contact Management</p>
-            <div class="sorted-indicator" id="sortIndicator">A-Z</div>
+            <h1><i class="fas fa-address-book"></i> Contact Hub</h1>
+            <div class="controls">
+                <input type="text" id="search" placeholder="🔍 Search contacts..." oninput="searchContacts()">
+                <button id="voice-btn" onclick="toggleVoiceSearch()"><i class="fas fa-microphone"></i></button>
+                <button id="add-contact" onclick="openModal('add')"><i class="fas fa-plus"></i> Add Contact</button>
+            </div>
         </div>
-
-        <div class="controls">
-            <input type="text" id="search" placeholder="🔍 Search contacts..." oninput="filterContacts()">
-            <button class="btn btn-primary" onclick="toggleVoiceSearch()"><i class="fas fa-microphone"></i></button>
-            <button class="btn btn-success" onclick="showModal('add')"><i class="fas fa-plus"></i> Add Contact</button>
-            <button class="btn btn-primary" onclick="sortContacts('alpha')"><i class="fas fa-sort-alpha-down"></i> A-Z</button>
-            <button class="btn btn-primary" onclick="sortContacts('fav')"><i class="fas fa-star"></i> Favorites</button>
-            <button class="btn btn-primary" onclick="detectDuplicates()"><i class="fas fa-bug"></i> Check Duplicates</button>
-        </div>
-
-        <div class="contacts-grid" id="contactsGrid"></div>
+        <div class="contacts-grid" id="contacts-grid"></div>
     </div>
 
-    <!-- Modals -->
-    <div id="modal" class="modal">
+    <!-- Modal for Add/Edit -->
+    <div id="modal">
         <div class="modal-content">
-            <h2 id="modalTitle">Add Contact</h2>
-            <form id="contactForm">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="name" required>
-                </div>
-                <div class="form-group">
-                    <label>Phone</label>
-                    <input type="tel" id="phone" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="email">
-                </div>
-                <div class="form-group">
-                    <label>Photo URL</label>
-                    <input type="url" id="photo" placeholder="https://example.com/photo.jpg">
-                </div>
-                <div class="form-group">
-                    <label>Birthday (YYYY-MM-DD)</label>
-                    <input type="date" id="birthday">
-                </div>
-                <div class="form-group">
-                    <label>Group</label>
-                    <select id="group">
-                        <option value="Family">Family</option>
-                        <option value="Friends">Friends</option>
-                        <option value="Work">Work</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="notes" rows="3"></textarea>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn btn-success" style="flex:1;">Save</button>
-                    <button type="button" class="btn btn-danger" onclick="closeModal()" style="flex:1;">Cancel</button>
-                </div>
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Add Contact</h2>
+            <form id="contact-form">
+                <input type="file" id="avatar" accept="image/*" onchange="previewAvatar()">
+                <div class="contact-avatar" id="avatar-preview">👤</div>
+                <input type="text" id="name" placeholder="Name *" required>
+                <input type="tel" id="phone" placeholder="Phone *">
+                <input type="email" id="email" placeholder="Email">
+                <input type="date" id="birthday" placeholder="Birthday">
+                <input type="text" id="group" placeholder="Group (e.g. Family)">
+                <textarea id="notes" placeholder="Notes"></textarea>
+                <button type="submit" class="login-btn" style="margin-top:1rem;">Save Contact</button>
             </form>
         </div>
     </div>
 
     <script>
+        // Initialize app
         let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
-        let currentEditId = null;
+        let editingId = null;
         let recognition = null;
-        let isSortedFav = false;
+        let watchId = null;
+        createParticles();
 
-        // Initialize particles for popup
-        function initParticles() {
+        // Splash to Login
+        function enterApp() {
+            document.getElementById('splash').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('login-page').style.display = 'flex';
+            }, 1000);
+        }
+
+        // Login (simple demo)
+        function login() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            renderContacts();
+            checkReminders();
+            checkDuplicates();
+        }
+
+        // Particles for splash
+        function createParticles() {
             const particles = document.getElementById('particles');
             for (let i = 0; i < 50; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
                 particle.style.animationDelay = Math.random() * 6 + 's';
                 particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particle.style.width = particle.style.height = (Math.random() * 4 + 2) + 'px';
                 particles.appendChild(particle);
             }
         }
-        initParticles();
 
-        function enterApp() {
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
-            renderContacts();
-            checkReminders();
+        // Voice Search (Web Speech API)
+        function toggleVoiceSearch() {
+            const btn = document.getElementById('voice-btn');
+            if (!('webkitSpeechRecognition' in window)) {
+                alert('Voice search not supported in this browser');
+                return;
+            }
+            if (btn.classList.contains('active')) {
+                if (recognition) recognition.stop();
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-microphone"></i>';
+            } else {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                recognition.onresult = (e) => {
+                    const query = e.results[0][0].transcript.toLowerCase();
+                    document.getElementById('search').value = query;
+                    searchContacts();
+                };
+                recognition.onerror = () => toggleVoiceSearch();
+                recognition.start();
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+            }
         }
 
         // Contact Operations
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const contact = {
-                id: currentEditId || Date.now(),
+                id: editingId || Date.now(),
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 email: document.getElementById('email').value,
-                photo: document.getElementById('photo').value || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(document.getElementById('name').value) + '&size=256&background=667eea&color=fff',
                 birthday: document.getElementById('birthday').value,
-                group: document.getElementById('group').value,
+                group: document.getElementById('group').value || 'Uncategorized',
                 notes: document.getElementById('notes').value,
                 favorite: false,
+                avatar: document.getElementById('avatar').files[0] ? URL.createObjectURL(document.getElementById('avatar').files[0]) : null,
                 location: null
             };
-            if (currentEditId) {
-                const index = contacts.findIndex(c => c.id === currentEditId);
+            if (editingId) {
+                const index = contacts.findIndex(c => c.id === editingId);
                 contacts[index] = contact;
             } else {
-                contacts.push(contact);
-                autoUpdateContact(contact); // Smart auto-update
+                contacts.unshift(contact);
             }
-            saveContacts();
-            renderContacts();
+            localStorage.setItem('contacts', JSON.stringify(contacts));
             closeModal();
-            suggestFrequentContacts();
+            renderContacts();
+            checkDuplicates();
         });
 
-        function saveContacts() {
-            localStorage.setItem('contacts', JSON.stringify(contacts));
-        }
-
         function renderContacts(filtered = contacts) {
-            const grid = document.getElementById('contactsGrid');
-            grid.innerHTML = '';
-            filtered.forEach(contact => {
-                const card = document.createElement('div');
-                card.className = 'contact-card';
-                card.innerHTML = `
-                    <button class="fav-btn" onclick="toggleFavorite(${contact.id})">
-                        <i class="fas ${contact.favorite ? 'fa-star' : 'fa-star-o'}"></i>
-                    </button>
-                    <img src="${contact.photo}" alt="${contact.name}" class="contact-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&size=256&background=667eea&color=fff'">
-                    <div class="contact-name">${contact.name} <span class="group-tag">${contact.group}</span></div>
-                    <div class="contact-details">
-                        📞 ${contact.phone}<br>
-                        ✉️ ${contact.email || 'N/A'}<br>
-                        ${contact.location ? `<span class="location" onclick="trackLocation(${contact.id})"><i class="fas fa-map-marker-alt"></i> ${contact.location}</span>` : ''}
-                    </div>
+            const grid = document.getElementById('contacts-grid');
+            // Alphabetical sorting
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+            grid.innerHTML = filtered.map(contact => `
+                <div class="contact-card">
+                    <button class="fav-btn" onclick="toggleFavorite(${contact.id})">${contact.favorite ? '❤️' : '🤍'}</button>
+                    <div class="contact-avatar">${contact.avatar ? `<img src="${contact.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : contact.name[0]}</div>
+                    <div class="contact-name">${contact.name}</div>
+                    <div class="contact-phone">${contact.phone || 'No phone'}</div>
+                    ${contact.email ? `<div>${contact.email}</div>` : ''}
+                    <span class="group-tag">${contact.group}</span>
+                    ${contact.birthday && isUpcomingBirthday(contact.birthday) ? `<div class="reminder">🎉 Birthday soon!</div>` : ''}
                     <div class="contact-actions">
                         <button class="action-btn call-btn" onclick="callContact('${contact.phone}')"><i class="fas fa-phone"></i></button>
-                        <button class="action-btn sms-btn" onclick="smsContact('${contact.phone}', '${contact.name}')"><i class="fas fa-sms"></i></button>
-                        <button class="action-btn" onclick="editContact(${contact.id})" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteContact(${contact.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn msg-btn" onclick="msgContact('${contact.phone}')"><i class="fas fa-sms"></i></button>
+                        <button class="action-btn edit-btn" onclick="editContact(${contact.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteContact(${contact.id})"><i class="fas fa-trash"></i></button>
                     </div>
-                `;
-                grid.appendChild(card);
-            });
+                    ${contact.phone ? `<button class="location-btn" onclick="trackLocation(${contact.id})">📍 Track Location</button>` : ''}
+                </div>
+            `).join('');
         }
 
-        function filterContacts() {
+        function searchContacts() {
             const query = document.getElementById('search').value.toLowerCase();
-            const filtered = contacts.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || c.email?.toLowerCase().includes(query));
+            const filtered = contacts.filter(c => 
+                c.name.toLowerCase().includes(query) || 
+                c.phone?.includes(query) || 
+                c.email?.toLowerCase().includes(query) ||
+                c.group.toLowerCase().includes(query)
+            );
             renderContacts(filtered);
         }
 
-        function sortContacts(type) {
-            if (type === 'alpha') {
-                contacts.sort((a, b) => a.name.localeCompare(b.name));
-                document.getElementById('sortIndicator').textContent = 'A-Z';
-                isSortedFav = false;
-            } else {
-                const favedFirst = contacts.filter(c => c.favorite).sort((a, b) => a.name.localeCompare(b.name));
-                const others = contacts.filter(c => !c.favorite).sort((a, b) => a.name.localeCompare(b.name));
-                contacts = [...favedFirst, ...others];
-                document.getElementById('sortIndicator').textContent = '⭐ Favorites First';
-                isSortedFav = true;
-            }
-            saveContacts();
-            renderContacts();
-        }
-
-        function toggleFavorite(id) {
-            const contact = contacts.find(c => c.id === id);
-            contact.favorite = !contact.favorite;
-            saveContacts();
-            renderContacts();
-        }
-
-        function editContact(id) {
-            const contact = contacts.find(c => c.id === id);
-            currentEditId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Contact';
-            document.getElementById('name').value = contact.name;
-            document.getElementById('phone').value = contact.phone;
-            document.getElementById('email').value = contact.email;
-            document.getElementById('photo').value = contact.photo;
-            document.getElementById('birthday').value = contact.birthday;
-            document.getElementById('group').value = contact.group;
-            document.getElementById('notes').value = contact.notes;
-            showModal('edit');
-        }
-
-        function deleteContact(id) {
-            if (confirm('Delete this contact?')) {
-                contacts = contacts.filter(c => c.id !== id);
-                saveContacts();
-                renderContacts();
-            }
-        }
-
-        function showModal(type) {
-            currentEditId = null;
-            if (type === 'add') {
-                document.getElementById('modalTitle').textContent = 'Add Contact';
-                document.getElementById('contactForm').reset();
+        function openModal(mode, id = null) {
+            editingId = id;
+            document.getElementById('modal-title').textContent = mode === 'add' ? 'Add Contact' : 'Edit Contact';
+            if (id) {
+                const contact = contacts.find(c => c.id === id);
+                document.getElementById('name').value = contact.name;
+                document.getElementById('phone').value = contact.phone;
+                document.getElementById('email').value = contact.email;
+                document.getElementById('birthday').value = contact.birthday;
+                document.getElementById('group').value = contact.group;
+                document.getElementById('notes').value = contact.notes;
             }
             document.getElementById('modal').style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
-            currentEditId = null;
+            document.getElementById('contact-form').reset();
+            editingId = null;
+            document.getElementById('avatar-preview').textContent = '👤';
         }
 
-        // Call/SMS (tel/sms links)
+        function toggleFavorite(id) {
+            const contact = contacts.find(c => c.id === id);
+            contact.favorite = !contact.favorite;
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            renderContacts();
+        }
+
+        function deleteContact(id) {
+            if (confirm('Delete this contact?')) {
+                contacts = contacts.filter(c => c.id !== id);
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+                renderContacts();
+            }
+        }
+
+        function editContact(id) {
+            openModal('edit', id);
+        }
+
         function callContact(phone) {
             window.open(`tel:${phone}`, '_blank');
         }
 
-        function smsContact(phone, name) {
-            window.open(`sms:${phone}?body=Hi ${name}!`, '_blank');
+        function msgContact(phone) {
+            window.open(`sms:${phone}`, '_blank');
         }
 
         // Live Location Tracking
         function trackLocation(id) {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const contact = contacts.find(c => c.id === id);
-                    contact.location = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-                    saveContacts();
-                    renderContacts();
-                    alert('Location updated!');
-                });
-            }
+            if (!navigator.geolocation) return alert('Geolocation not supported');
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+            watchId = navigator.geolocation.watchPosition((pos) => {
+                const contact = contacts.find(c => c.id === id);
+                contact.location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+                alert(`Location updated: ${contact.location.lat.toFixed(4)}, ${contact.location.lng.toFixed(4)}`);
+            }, () => alert('Location access denied'), { enableHighAccuracy: true });
         }
 
-        // Voice Search
-        function toggleVoiceSearch() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert('Voice search not supported in this browser');
-                return;
-            }
-            if (!recognition) {
-                recognition = new webkitSpeechRecognition();
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.lang = 'en-US';
-                recognition.onresult = function(e) {
-                    document.getElementById('search').value = e.results[0][0].transcript;
-                    filterContacts();
-                };
-            }
-            recognition.start();
-        }
-
-        // AI Features
-        function detectDuplicates() {
+        // Smart Features
+        function checkDuplicates() {
             const dups = [];
-            const seen = new Map();
-            contacts.forEach(c => {
-                const key = `${c.name.toLowerCase()}|${c.phone}`;
-                if (seen.has(key)) {
-                    dups.push([seen.get(key), c]);
-                } else {
-                    seen.set(key, c);
+            for (let i = 0; i < contacts.length; i++) {
+                for (let j = i + 1; j < contacts.length; j++) {
+                    if (contacts[i].phone === contacts[j].phone && contacts[i].name.toLowerCase() === contacts[j].name.toLowerCase()) {
+                        dups.push([contacts[i], contacts[j]]);
+                    }
                 }
-            });
-            if (dups.length > 0) {
-                if (confirm(`Found ${dups.length} duplicates. Merge all?`)) {
-                    dups.forEach(([keep, dup]) => {
-                        Object.assign(keep, dup); // Merge data
-                        contacts = contacts.filter(c => c.id !== dup.id);
-                    });
-                    saveContacts();
-                    renderContacts();
-                }
-            } else {
-                alert('No duplicates found!');
             }
+            if (dups.length > 0) alert(`Found ${dups.length} duplicate(s). Use edit to merge manually.`);
         }
 
-        function suggestFrequentContacts() {
-            // Simulate frequent calls via localStorage counter
-            const frequent = contacts.slice(0, 3); // Top 3
-            if (frequent.length) {
-                alert(`Smart Suggestion: Frequently called: ${frequent.map(c => c.name).join(', ')}`);
-            }
-        }
-
-        function autoUpdateContact(contact) {
-            // Simulate auto-update (e.g., validate email format)
-            if (contact.email && !contact.email.includes('@')) {
-                contact.email = '';
-            }
+        function isUpcomingBirthday(bday) {
+            const today = new Date();
+            const bdayDate = new Date(today.getFullYear(), new Date(bday).getMonth(), new Date(bday).getDate());
+            const diff = bdayDate - today;
+            return diff > 0 && diff < 7 * 24 * 60 * 60 * 1000; // Within 7 days
         }
 
         function checkReminders() {
-            const today = new Date().toISOString().slice(0, 10);
-            const reminders = contacts.filter(c => c.birthday && c.birthday.slice(5) === today.slice(5));
-            if (reminders.length) {
-                alert(`🎉 Birthdays today: ${reminders.map(c => c.name).join(', ')}`);
-            }
+            contacts.forEach(contact => {
+                if (contact.birthday && isUpcomingBirthday(contact.birthday)) {
+                    // Notification (requires user permission)
+                    if (Notification.permission === 'granted') {
+                        new Notification(`Birthday reminder: ${contact.name}`);
+                    }
+                }
+            });
         }
 
-        // Close modals on outside click
-        window.onclick = function(e) {
-            const modal = document.getElementById('modal');
-            if (e.target === modal) closeModal();
-        }
+        // Auto-favorite frequent contacts (demo: first 3 calls)
+        // In production, track call history in localStorage
 
-        // Initial render
-        renderContacts();
+        // Groups: Filter by group in search (already implemented)
+
+        // Init
+        Notification.requestPermission();
     </script>
 </body>
 </html>
